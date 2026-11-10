@@ -29,14 +29,20 @@ The approach has two parts:
 
 ## Data
 
-- Source: [FastF1](https://github.com/theOehrly/Fast-F1), an open-source Python library that exposes public timing and telemetry data (2018 onwards).
+- Source: [OpenF1](https://openf1.org), a free public API with timing, tyre, weather and race-control data (2023 onwards).
+  FastF1 was the original choice, but its current version requires a paid F1TV subscription to download timing data.
 - No API key or account required.
+- First race analysed: **2023 Bahrain Grand Prix** (dry, high tyre degradation, mostly two-stop races).
 - Raw data is cached locally in `data/cache/` and is **not** committed to the repository.
 
 ### Cleaning applied
+- Removed lap 1 (standing start).
 - Removed in-laps and out-laps (pit entry and exit).
-- Removed laps under safety car, virtual safety car and red flag.
-- Removed laps without a valid lap time or flagged as inaccurate.
+- Removed laps under safety car, virtual safety car and red flag (from race-control messages).
+- Removed laps without a lap time or with inconsistent timing (sectors missing or not adding up to the lap time).
+- Removed extreme outliers: laps slower than 107% of the driver's own median (failures, spins, damage).
+
+For 2023 Bahrain this keeps **911 of 1,058 laps** (147 removed; the count per rule is shown in notebook 01).
 
 ## Method
 
@@ -51,7 +57,7 @@ The approach has two parts:
 ```
 f1-race-strategy-predictor/
 ├── data/
-│   ├── cache/            # FastF1 cache (git-ignored)
+│   ├── cache/            # OpenF1 API cache (git-ignored)
 │   └── processed/        # cleaned datasets
 ├── notebooks/
 │   ├── 01_exploracao_dados.ipynb      # data exploration
@@ -102,7 +108,7 @@ Results should be read as an estimate of relative strategy quality, not as a rea
 
 ## Roadmap
 
-- [ ] Stage 1: data loading and cleaning
+- [x] Stage 1: data loading and cleaning
 - [ ] Stage 2: features and lap-time model
 - [ ] Stage 3: strategy simulator
 - [ ] Stage 4: tests
@@ -110,7 +116,7 @@ Results should be read as an estimate of relative strategy quality, not as a rea
 
 ## Tech stack
 
-Python · FastF1 · pandas · scikit-learn · XGBoost · matplotlib · pytest
+Python · OpenF1 API · pandas · scikit-learn · XGBoost · matplotlib · pytest
 
 ## Author
 
